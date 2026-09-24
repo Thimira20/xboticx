@@ -1,0 +1,16 @@
+{
+  "editions": [
+    { "year": 2014, "edition": 1, "title": "Where it began", "highlight": "[CONFIRM one line]" },
+    { "year": 2015, "edition": 2, "title": "", "highlight": "" },
+    { "year": 2016, "edition": 3, "title": "", "highlight": "" },
+    { "year": 2017, "edition": 4, "title": "", "highlight": "" },
+    { "year": 2018, "edition": 5, "title": "", "highlight": "" },
+    { "year": 2023, "edition": 6, "title": "The comeback", "highlight": "" },
+    { "year": 2025, "edition": 7, "title": "Sharpen • Sync • Strike", "highlight": "", "photo": "assets/img/winners/2025-school-most-popular.jpg", "link": "#winners" }
+  ],
+  "gaps": [
+    { "from": 2019, "to": 2022, "label": "System paused" },
+    { "from": 2024, "to": 2024, "label": "Recharging" }
+  ],
+  "next": { "year": 2026, "edition": 8, "label": "You are here", "link": "#register" }
+}

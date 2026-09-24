@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="120 675 566 450" role="img" aria-label="XBOTIX">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="0.25" y2="1">
+      <stop offset="0" stop-color="#FF4A2E"/><stop offset="1" stop-color="#D30000"/>
+    </linearGradient>
+  </defs>
+  <g fill="url(#g)">
+    <polygon points="207,693 275,683 322,707 320,745 262,767 203,738"/>
+    <polygon points="320,748 375,733 430,760 427,805 378,823 320,795"/>
+    <polygon points="432,762 474,744 527,772 520,810 485,826 430,802"/>
+    <polygon points="513,733 547,719 590,742 597,775 565,792 517,765"/>
+    <polygon points="383,835 436,805 490,830 490,880 440,907 383,880"/>
+    <polygon points="315,910 380,880 440,910 440,978 380,1012 315,980"/>
+    <polygon points="447,885 495,880 550,908 560,965 512,1002 447,975"/>
+    <polygon points="150,988 240,945 310,975 305,1060 215,1115 130,1078"/>
+    <polygon points="565,965 605,936 657,962 675,1020 636,1062 577,1030"/>
+  </g>
+</svg>

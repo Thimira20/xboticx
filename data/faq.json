@@ -1,0 +1,9 @@
+[
+  { "q": "Who can participate?", "a": "School students and university undergraduates, competing in two separate categories. Teams of 2 to 5 members. [CONFIRM full eligibility rules]" },
+  { "q": "How many members per team?", "a": "Every team has 2 to 5 members. The first member listed is the team leader." },
+  { "q": "What is the verification letter?", "a": "A letter from your principal confirming the students are from your school, signed and stamped, uploaded as a PDF (max 5 MB). No scanner? Use Google Drive → Scan or iPhone Notes → Scan Documents." },
+  { "q": "Who can be the guardian?", "a": "A teacher, a parent, or another responsible adult (18+) who is responsible for the team on competition day." },
+  { "q": "Is there a registration fee?", "a": "[CONFIRM]" },
+  { "q": "I didn't get a confirmation email", "a": "Check your spam folder. Your Registration ID on the success screen is valid. You can also contact us on WhatsApp." },
+  { "q": "Can one student be in two teams?", "a": "No. Each phone number (and each university registration number) can only be in one team. [CONFIRM]" }
+]
