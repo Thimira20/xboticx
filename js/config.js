@@ -5,12 +5,12 @@ window.XBOTIX_CONFIG = {
   year: 2026, edition: 8,             // [CONFIRM]
   theme: "",                          // [CONFIRM] 2026 tagline (2025 was "Sharpen • Sync • Strike")
   dates: {                            // ALWAYS with +05:30 [CONFIRM all]
-    registrationOpens:  "2026-10-15T00:00:00+05:30",
-    registrationCloses: "2026-11-30T23:59:59+05:30",
-    competitionStarts:  "2026-12-12T08:00:00+05:30",
-    competitionEnds:    "2026-12-12T18:00:00+05:30"
+    registrationOpens:  "2026-09-02T00:00:00+05:30",
+    registrationCloses: "2026-12-02T23:59:59+05:30",
+    competitionStarts:  "2026-12-19T08:00:00+05:30",
+    competitionEnds:    "2026-12-19T18:00:00+05:30"
   },
-  api: { url: "PASTE_APPS_SCRIPT_EXEC_URL", timeoutMs: 60000 },
+  api: { url: "https://script.google.com/macros/s/AKfycbyATUddgx0aihA4wI4HeSUx4qVlhZ68EVohkIXVLy-s8rBKiA_MmPN9uykwBPfyYLoK_Q/exec", timeoutMs: 60000 },
   features: { sponsors: false, workshops: false, announcements: false, liveCount: false, turnstile: false },
   team:   { school: { min: 2, max: 5 }, university: { min: 2, max: 5 } },   // member 1 = leader
   upload: { maxMB: 5, types: ["application/pdf"], allowImages: false,        // allowImages:true adds image/jpeg,image/png + compression
