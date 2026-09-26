@@ -246,6 +246,25 @@
   .sec-signature .sec-bg::before { opacity: .06; }
   .sec-signature::before { content: ""; position: absolute; inset: 0; z-index: 1; background: radial-gradient(55% 40% at 50% 0%, rgba(227,18,11,.16), transparent 70%); }
 
+  /* Colour-only background — no photo — for sections where a picture would compete with dense UI
+     (Key Dates, Workshops, Partners): a moving mix of red and near-black. */
+  .sec-tint { position: relative; }
+  .sec-tint::before {
+    content: ""; position: absolute; inset: 0; z-index: 0;
+    background:
+      radial-gradient(46% 60% at 12% 8%, rgba(227,18,11,.20), transparent 62%),
+      radial-gradient(40% 50% at 92% 88%, rgba(179,0,0,.18), transparent 60%),
+      linear-gradient(160deg, rgba(0,0,0,.5) 0%, transparent 55%);
+  }
+
+  /* Pattern-only background — no photo, no colour wash — for FAQ and Register: the brand honeycomb,
+     large and faint, standing on its own rather than as an accent over a photo. */
+  .sec-pattern { position: relative; }
+  .sec-pattern::before {
+    content: ""; position: absolute; inset: 0; z-index: 0;
+    background: var(--honey); background-size: 84px 150px; opacity: .05;
+  }
+
   /* STATS */
   .stats { border-block: 1px solid var(--line); background: var(--bg-2); padding-block: var(--s-8); }
   .stat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--s-6) var(--s-4); text-align: center; }
@@ -544,6 +563,11 @@
   .map-box { margin-top: var(--s-3); border-radius: 10px; overflow: hidden; background: var(--surface-2); }
   .map-box iframe { width: 100%; height: 260px; border: 0; }
   .socials { display: flex; flex-wrap: wrap; gap: var(--s-2); }
+  .contact-people { display: grid; gap: var(--s-4); }
+  .contact-person { padding-bottom: var(--s-4); border-bottom: 1px solid var(--line); }
+  .contact-person:last-child { padding-bottom: 0; border-bottom: 0; }
+  .contact-person strong { display: block; color: var(--text); }
+  .contact-person .muted { display: block; margin-bottom: var(--s-2); }
   @media (min-width: 768px) { .contact-grid { grid-template-columns: 3fr 2fr; } }
 
   /* FOOTER */

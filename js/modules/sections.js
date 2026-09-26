@@ -262,15 +262,24 @@ export function initContact() {
       el('a', { class: 'btn btn-primary btn-sm', ...linkAttrs(v.mapUrl) }, 'Open in Maps'), loadMap),
     mapBox));
 
-  const wa = whatsappUrl(L.whatsappContact), socials = socialLinks();
+  const people = (cfg.contacts || []).map(p => {
+    const wa = whatsappUrl(p.phone);
+    return el('div', { class: 'contact-person' },
+      el('div', {}, el('strong', {}, p.name), p.role && el('span', { class: 'muted small' }, p.role)),
+      el('div', { class: 'socials' },
+        wa && el('a', { class: 'btn btn-ghost btn-sm', ...linkAttrs(wa) }, 'WhatsApp'),
+        p.email && el('a', { class: 'btn btn-ghost btn-sm', href: `mailto:${p.email}` }, p.email)));
+  });
+
+  const socials = socialLinks();
   const reach = [
-    wa && el('a', { class: 'btn btn-primary btn-sm', ...linkAttrs(wa) }, 'WhatsApp us'),
-    L.email && el('a', { class: 'btn btn-ghost btn-sm', href: `mailto:${L.email}` }, L.email),
     L.whatsappGroup && el('a', { class: 'btn btn-ghost btn-sm', ...linkAttrs(L.whatsappGroup) }, 'Join WhatsApp group'),
     ...socials
   ].filter(Boolean);
+
   grid.append(el('div', { class: 'card' }, el('h3', {}, 'Get in touch'),
-    reach.length ? el('div', { class: 'socials' }, reach) : el('p', {}, 'Contact details will be announced soon.')));
+    people.length ? el('div', { class: 'contact-people' }, people) : el('p', {}, 'Contact details will be announced soon.'),
+    reach.length ? el('div', { class: 'socials', style: people.length ? 'margin-top:1rem' : '' }, reach) : null));
   observe(grid);
 }
 
