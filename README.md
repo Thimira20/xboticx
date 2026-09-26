@@ -171,3 +171,100 @@ the page loads its data over `fetch()`, which browsers block on a plain `file://
 
 If you want to go back to the "coming soon" teaser (e.g. before the first real workshop happens), set
 its flag back to `false` in `js/config.js` — the JSON data can stay as-is, it just won't be shown.
+
+---
+
+## PART 3 — Deploying the site and connecting a domain (e.g. `xbotix.lk`)
+
+This project's code already lives on GitHub at **github.com/Thimira20/xboticx**. Deploying means
+connecting that repo to a free static host, which then rebuilds the live site automatically every
+time you push a change — no servers, no manual uploads after the first setup.
+
+> **Before you start:** this repo currently has commits made locally that haven't been pushed to
+> GitHub yet (`git status` shows "ahead of origin/main"). Push them first (`git push`) — the host
+> deploys whatever is on GitHub, not what's on your computer.
+
+### Step 1 — Deploy to a free host
+
+**Netlify** (recommended — simplest UI) or **Cloudflare Pages** both work well and are both fast in
+Sri Lanka. Pick one; you don't need both.
+
+**Netlify:**
+
+1. Go to [app.netlify.com](https://app.netlify.com) → sign up/log in with your GitHub account.
+2. **Add new site → Import an existing project → Deploy with GitHub.**
+3. Authorize Netlify to see your repos, then pick **Thimira20/xboticx**.
+4. Build settings: leave **Build command** empty and **Publish directory** as `.` (this site has no
+   build step — it's plain HTML/CSS/JS). Click **Deploy**.
+5. In under a minute you'll get a live URL like `xboticx-abc123.netlify.app`. That's your site, live,
+   for free.
+6. From now on, every `git push` to `main` redeploys automatically (check the **Deploys** tab to watch
+   it happen).
+
+**Cloudflare Pages** (alternative): [dash.cloudflare.com](https://dash.cloudflare.com) → **Workers &
+Pages → Create → Pages → Connect to Git** → pick the repo → same settings (no build command, root
+publish directory) → **Save and Deploy**.
+
+### Step 2 — Getting a `.lk` domain
+
+`.lk` domains are managed by **LK Domain Registry**, at **[domains.lk](https://www.domains.lk)** — this
+is the only official place to register one (not Namecheap/GoDaddy, though some resellers also work
+through the same registry).
+
+1. Go to domains.lk and search for `xbotix.lk`.
+2. There are two kinds of `.lk` domain:
+   - **Bare `.lk`** (e.g. `xbotix.lk` exactly) — sometimes needs manual review/approval and has a
+     higher fee, since it's the "premium" tier of the namespace.
+   - **Third-level, e.g. `xbotix.org.lk` or `xbotix.com.lk`** — registers instantly online, cheaper,
+     and `.org.lk` reads very naturally for a university society/event. Worth checking as a backup in
+     case bare `.lk` is slow to approve or unavailable.
+3. Register through domains.lk directly, or through one of the accredited local registrars listed on
+   their site. You'll need basic details (name/organization, NIC or business registration, contact
+   email/phone) and to pay the registration fee (billed annually).
+4. Bare `.lk` approval can take a few days if manually reviewed; `.com.lk`/`.org.lk` is usually near-instant.
+
+### If you already own a domain like this
+
+If the committee registered `xbotix.lk` (or similar) in a previous year:
+
+1. **Find out where it's registered.** Look up `xbotix.lk` on domains.lk's WHOIS/search tool to see if
+   it's already taken and (where shown) which registrar manages it.
+2. **Find who has the login.** It's likely under a previous committee member's or the university's
+   account. Ask around — EIES/faculty IT staff are the most likely to know.
+3. **Check if it's actively used for anything else first** — especially **email**. If anyone has an
+   `@xbotix.lk` email address, there will be **MX records** in its DNS. Note those down before changing
+   anything, so you only touch the web (`A`/`CNAME`) records and don't break existing email.
+4. **If access is truly lost** (nobody has the login and it's still registered to the university/EIES),
+   contact LK Domain Registry support directly — they can help verify organizational ownership and
+   restore access. This can take some back-and-forth, so start it early if you suspect this is the case.
+5. Once you can log in and manage its DNS, skip to Step 3 below.
+
+### Step 3 — Pointing the domain at your deployed site
+
+In your host's dashboard, find **Domain settings** (Netlify: **Site settings → Domain management → Add
+a domain**; Cloudflare Pages: **your Pages project → Custom domains → Set up a custom domain**), and
+type `xbotix.lk`. The host will then offer one of two ways to connect it — pick whichever your
+domain's current DNS situation allows:
+
+- **Delegate DNS to the host** (simplest): change `xbotix.lk`'s nameservers at domains.lk to the ones
+  Netlify/Cloudflare gives you. The host then manages all DNS for the domain, including auto-issuing a
+  free HTTPS certificate. **Don't do this if the domain has existing email (MX records) you need to
+  keep** — moving nameservers moves ALL records, so you'd need to recreate those MX records at the new
+  host too.
+- **Keep DNS where it is, just add records**: at your current DNS provider, add the record(s) the host
+  gives you — typically an `A` record (or `ALIAS`/`ANAME`) for the bare domain, and a `CNAME` for `www`
+  pointing at your `*.netlify.app` / `*.pages.dev` address. This is the safer choice if the domain has
+  other things (like email) on it already, since you only touch the records for the website itself.
+
+DNS changes can take anywhere from a few minutes to ~24 hours to fully propagate. Once verified, the
+host automatically issues a free HTTPS certificate — no separate step needed.
+
+### Step 4 — After the domain is live
+
+- **Update the Apps Script `SITE_URL` Script Property** (see `apps-script/README-apps-script.md`) to
+  `https://xbotix.lk` (no trailing slash). This is what makes the logo and rulebook links work correctly
+  inside confirmation emails — right now it's likely still blank or pointing at nothing.
+- **Set `debug: false`** in `js/config.js` if you haven't already, so `?stage=` overrides stop working
+  for the public.
+- Optional, not required to launch: add Open Graph meta tags with the real domain so WhatsApp/Facebook
+  link previews look good when people share it — ask if you want this done.

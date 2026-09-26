@@ -262,12 +262,18 @@ export function initContact() {
       el('a', { class: 'btn btn-primary btn-sm', ...linkAttrs(v.mapUrl) }, 'Open in Maps'), loadMap),
     mapBox));
 
+  // Local display format for a WhatsApp number, e.g. "94715508827" -> "071 550 8827".
+  const fmtWaNumber = num => {
+    const d = String(num || '').replace(/\D/g, '');
+    const local = d.startsWith('94') ? '0' + d.slice(2) : d;
+    return local.length === 10 ? `${local.slice(0, 3)} ${local.slice(3, 6)} ${local.slice(6)}` : local;
+  };
   const people = (cfg.contacts || []).map(p => {
     const wa = whatsappUrl(p.phone);
     return el('div', { class: 'contact-person' },
       el('div', {}, el('strong', {}, p.name), p.role && el('span', { class: 'muted small' }, p.role)),
       el('div', { class: 'socials' },
-        wa && el('a', { class: 'btn btn-ghost btn-sm', ...linkAttrs(wa) }, 'WhatsApp'),
+        wa && el('a', { class: 'btn btn-ghost btn-sm', ...linkAttrs(wa) }, `WhatsApp · ${fmtWaNumber(p.phone)}`),
         p.email && el('a', { class: 'btn btn-ghost btn-sm', href: `mailto:${p.email}` }, p.email)));
   });
 
