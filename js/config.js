@@ -23,8 +23,8 @@ window.XBOTIX_CONFIG = {
   venue: { name: "Faculty of Engineering, University of Ruhuna", address: "Hapugala, Galle", mapUrl: "https://maps.google.com/?q=Faculty+of+Engineering+University+of+Ruhuna" },
   links: { whatsappGroup: "", whatsappContact: "94715508827", email: "eies@eng.ruh.ac.lk", facebook: "", instagram: "", linkedin: "", youtube: "" },
   contacts: [                                                                  // shown as named people in Venue & Contact
-    { name: "Mr. Milinda Jayawardhana", role: "EIES Society President", phone: "94715508827", email: "eies@eng.ruh.ac.lk" },
-    { name: "Mr. Hasintha Edirisooriya", role: "", phone: "94713125373", email: "hasinthabhanuka11@gmail.com" }
+    { name: "Mr. Milinda Jayawardhana", role: "Chair", phone: "94715508827", email: "eies@eng.ruh.ac.lk" },
+    { name: "Mr. Hasintha Edirisooriya", role: "Co-Chair", phone: "94713125373", email: "hasinthabhanuka11@gmail.com" }
   ],
   stats: [                                                                   // entries with value 0 are hidden until real numbers are confirmed
     { value: 7, label: "Editions" }, { value: 12, label: "Years of legacy" },
