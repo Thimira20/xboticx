@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="80" viewBox="0 0 240 80" role="img" aria-label="Sample Title Sponsor logo placeholder">
+  <rect width="240" height="80" rx="12" fill="#0F172A"/>
+  <circle cx="40" cy="40" r="20" fill="#E3120B"/>
+  <text x="72" y="35" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#F5F5F7">SAMPLE</text>
+  <text x="72" y="56" font-family="Arial, sans-serif" font-size="13" fill="#94A3B8">Title Sponsor</text>
+</svg>

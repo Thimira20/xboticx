@@ -11,7 +11,7 @@ window.XBOTIX_CONFIG = {
     competitionEnds:    "2026-12-19T18:00:00+05:30"
   },
   api: { url: "https://script.google.com/macros/s/AKfycbyATUddgx0aihA4wI4HeSUx4qVlhZ68EVohkIXVLy-s8rBKiA_MmPN9uykwBPfyYLoK_Q/exec", timeoutMs: 60000 },
-  features: { sponsors: false, workshops: false, announcements: false, liveCount: false, turnstile: false },
+  features: { sponsors: true, workshops: true, announcements: false, liveCount: false, turnstile: false },
   team:   { school: { min: 2, max: 5 }, university: { min: 2, max: 5 } },   // member 1 = leader
   upload: { maxMB: 5, types: ["application/pdf"], allowImages: false,        // allowImages:true adds image/jpeg,image/png + compression
             imageMaxPx: 2000, imageQuality: 0.8 },

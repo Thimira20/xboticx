@@ -1,6 +1,6 @@
 // Section renderers: stats, key dates, register placeholder, winners, workshops, sponsors, rulebooks, FAQ, contact, footer.
 // Every data-driven section hides itself gracefully if its data fails to load.
-import { $, el, cfg, fetchJSON, clean, fmtDate, fmtTime, linkAttrs, whatsappUrl, pad2 } from './util.js';
+import { $, $$, el, cfg, fetchJSON, clean, fmtDate, fmtTime, linkAttrs, whatsappUrl, pad2, prefersReduced } from './util.js';
 import { onStage, getStage } from './stage.js';
 import { observe } from './reveal.js';
 
@@ -107,23 +107,100 @@ export async function initWinners() {
 }
 
 /* ---------- Workshops (feature-flagged) ---------- */
+// A photo-gallery-style masonry (real image aspect ratios via CSS multi-column, so tiles are never
+// uniform) that resizes from one column on a phone up to five on desktop with no JS breakpoints needed.
+// Each tile shows just the school name; hovering (or tapping, on touch) lifts it in 3D and reveals the rest.
+function wsTile(w) {
+  const more = [w.district, w.date && fmtDate(w.date), w.caption].filter(Boolean).join(' · ');
+  const fig = el('figure', { class: 'ws-item', tabindex: '0' },
+    el('img', { src: w.photo, alt: `${w.school}${w.caption ? ' — ' + w.caption : ''}`, loading: 'lazy' }),
+    el('figcaption', {}, el('strong', {}, w.school), more && el('span', { class: 'ws-more' }, more)));
+  // Touch has no real :hover, so a tap toggles the reveal directly (closing whichever tile was open).
+  fig.addEventListener('click', () => {
+    if (matchMedia('(hover: hover)').matches) return;
+    const open = fig.classList.toggle('is-open');
+    $$('.ws-item.is-open').forEach(o => { if (o !== fig) o.classList.remove('is-open'); });
+  });
+  return fig;
+}
+
 export async function initWorkshops() {
-  const body = $('#workshopBody'), on = cfg.features.workshops;
+  const body = $('#workshopBody'), on = cfg.features.workshops, skipBtn = $('#wsSkip');
   const teaser = () => body.replaceChildren(el('div', { class: 'card cta-card reveal' },
     el('h3', {}, 'The XBOTIX School Workshop Series is coming soon'),
     el('p', {}, "We're planning hands-on robotics workshops for schools. Want us to visit yours?"),
     el('a', { class: 'btn btn-primary', ...linkAttrs(contactUrl()) }, 'Invite us to your school')));
-  if (!on) { teaser(); observe(body); return; }
+  if (!on) { teaser(); observe(body); skipBtn.hidden = true; return; }
   try {
     const { items } = await fetchJSON('data/workshops.json');
-    if (!items.length) { teaser(); observe(body); return; }
-    body.replaceChildren(el('div', { class: 'ws-grid' }, items.map(w => el('figure', {},
-      el('img', { src: w.photo, alt: w.caption || `Workshop at ${w.school}`, width: 800, height: 600, loading: 'lazy' }),
-      el('figcaption', {}, `${w.school}${w.district ? ', ' + w.district : ''}${w.caption ? ' — ' + w.caption : ''}`)))));
-  } catch { section('workshops').hidden = true; }
+    if (!items.length) { teaser(); observe(body); skipBtn.hidden = true; return; }
+    const grid = el('div', { class: 'ws-grid' }, items.map(wsTile));
+    body.replaceChildren(grid);
+    skipBtn.hidden = items.length < 3;
+    skipBtn.onclick = () => grid.lastElementChild.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth', block: 'center' });
+  } catch { section('workshops').hidden = true; skipBtn.hidden = true; }
 }
 
 /* ---------- Sponsors (feature-flagged) ---------- */
+// Confirmed partners cycle through a "spotlight" one at a time (auto-advance, arrows, dots) — an
+// advertising-style rotator rather than a static grid. Ordered by tier (data/sponsors.json → tiers).
+// A "coverflow" rotator: the active partner sits large and centered; its immediate neighbours peek in
+// half-cut-off at the edges, smaller and faded, so it's obvious there's more to see either side.
+function buildSpotlight(items) {
+  let i = 0, timer = null;
+  const stage = el('div', { class: 'spot-stage' });
+  const n = items.length;
+  const slides = items.map((p, idx) => el('figure', { class: 'spot-item' },
+    el('span', { class: 'logo-plate' }, el('img', { src: p.logo, alt: p.name, loading: idx === 0 ? 'eager' : 'lazy' })),
+    el('figcaption', {},
+      el('span', { class: 'spot-tier' }, p.tier ? `${p.tier} Partner` : 'Partner'),
+      el('strong', {}, p.name),
+      p.url && el('a', { class: 'spot-link', ...linkAttrs(p.url) }, 'Visit site'))));
+  stage.append(...slides);
+
+  const dotEls = items.map((p, idx) => el('button', { type: 'button', 'aria-label': `Show ${p.name}`, 'aria-current': String(idx === 0), onclick: () => go(idx) }));
+  const dots = el('div', { class: 'spot-dots' }, dotEls);
+  // el() can't create SVG nodes (document.createElement doesn't know the SVG namespace), so the icon is raw markup.
+  const arrow = (dir, label, path) => {
+    const b = el('button', { class: `spot-arrow spot-${dir}`, type: 'button', 'aria-label': label, onclick: () => go(i + (dir === 'next' ? 1 : -1)) });
+    b.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${path}"/></svg>`;
+    return b;
+  };
+
+  // Positions every slide by its signed distance from the active one (shortest way round the loop),
+  // so immediate neighbours land just off-centre and anything further out fades away completely.
+  function layout() {
+    const peek = parseFloat(getComputedStyle(stage).getPropertyValue('--spot-peek')) || 150;
+    slides.forEach((s, idx) => {
+      let rel = idx - i;
+      if (rel > n / 2) rel -= n; else if (rel < -n / 2) rel += n;
+      const active = rel === 0, mag = Math.min(Math.abs(rel), 2);
+      s.classList.toggle('is-active', active);
+      s.setAttribute('aria-hidden', String(!active));
+      s.style.transform = `translateX(${(rel * peek).toFixed(1)}px) scale(${(1 - mag * .22).toFixed(2)})`;
+      s.style.opacity = Math.max(0, 1 - mag * .55).toFixed(2);
+      s.style.zIndex = String(10 - mag);
+    });
+  }
+  function go(next) { i = (next + n) % n; layout(); dotEls.forEach((d, idx) => d.setAttribute('aria-current', String(idx === i))); }
+
+  const multi = n > 1;
+  const root = el('div', { class: 'spotlight' },
+    el('div', { class: 'spot-row' }, multi && arrow('prev', 'Previous partner', 'M15 5l-7 7 7 7'), stage, multi && arrow('next', 'Next partner', 'M9 5l7 7-7 7')),
+    multi && dots);
+  layout();
+  if (multi) addEventListener('resize', layout);   // --spot-peek changes at the desktop breakpoint
+
+  if (multi && !prefersReduced) {
+    const start = () => { timer = setInterval(() => go(i + 1), 4500); };
+    const stop = () => clearInterval(timer);
+    root.addEventListener('mouseenter', stop); root.addEventListener('mouseleave', start);
+    root.addEventListener('focusin', stop); root.addEventListener('focusout', start);
+    start();
+  }
+  return root;
+}
+
 export async function initSponsors() {
   const body = $('#partnerBody'), on = cfg.features.sponsors;
   const cta = () => body.replaceChildren(el('div', { class: 'card cta-card reveal' },
@@ -134,15 +211,8 @@ export async function initSponsors() {
   try {
     const { tiers, items } = await fetchJSON('data/sponsors.json');
     if (!items.length) { cta(); observe(body); return; }
-    body.replaceChildren(...tiers.map(t => {
-      const inTier = items.filter(i => i.tier === t);
-      if (!inTier.length) return null;
-      return el('div', { class: 'partner-tier' }, el('h3', {}, t),
-        el('div', { class: 'logo-wall' }, inTier.map(i => {
-          const img = el('img', { src: i.logo, alt: i.name, loading: 'lazy' });
-          return i.url ? el('a', { ...linkAttrs(i.url), 'aria-label': i.name }, img) : el('div', {}, img);
-        })));
-    }));
+    const ordered = tiers?.length ? [...items].sort((a, b) => tiers.indexOf(a.tier) - tiers.indexOf(b.tier)) : items;
+    body.replaceChildren(buildSpotlight(ordered));
   } catch { section('partners').hidden = true; }
 }
 

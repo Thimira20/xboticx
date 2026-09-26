@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="80" viewBox="0 0 240 80" role="img" aria-label="Sample Gold Sponsor logo placeholder">
+  <rect width="240" height="80" rx="12" fill="#78350F"/>
+  <polygon points="40,20 52,35 40,60 28,35" fill="#F59E0B"/>
+  <text x="72" y="35" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#FFFBEB">SAMPLE</text>
+  <text x="72" y="56" font-family="Arial, sans-serif" font-size="13" fill="#FDE68A">Gold Sponsor</text>
+</svg>
