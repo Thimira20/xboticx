@@ -14,8 +14,12 @@ function countUp(n) {
 }
 
 export function observe(root = document) {
-  // stagger children of [data-stagger] containers
-  $$('[data-stagger]', root).forEach(g => [...g.children].forEach((c, i) => { c.classList.add('reveal'); c.style.setProperty('--d', i); }));
+  // stagger children of [data-stagger] containers — capped so a long list (FAQ, a big gallery) doesn't
+  // make later items wait an age; everything past the cap reveals together with the capped item.
+  // root itself can carry data-stagger too (e.g. observe(grid) where grid IS the [data-stagger] element) —
+  // querySelectorAll only matches descendants, so that case is checked separately or it silently no-ops.
+  const containers = root.nodeType === 1 && root.matches('[data-stagger]') ? [root, ...$$('[data-stagger]', root)] : $$('[data-stagger]', root);
+  containers.forEach(g => [...g.children].forEach((c, i) => { c.classList.add('reveal'); c.style.setProperty('--d', Math.min(i, 6)); }));
   const items = $$('.reveal:not(.in), [data-count]:not([data-counted])', root);
   if (!('IntersectionObserver' in window)) { items.forEach(reveal); return; }
   io ||= new IntersectionObserver(entries => entries.forEach(e => {

@@ -134,8 +134,9 @@ export async function initWorkshops() {
   try {
     const { items } = await fetchJSON('data/workshops.json');
     if (!items.length) { teaser(); observe(body); skipBtn.hidden = true; return; }
-    const grid = el('div', { class: 'ws-grid' }, items.map(wsTile));
+    const grid = el('div', { class: 'ws-grid', dataset: { stagger: '' } }, items.map(wsTile));
     body.replaceChildren(grid);
+    observe(body);
     skipBtn.hidden = items.length < 3;
     skipBtn.onclick = () => grid.lastElementChild.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth', block: 'center' });
   } catch { section('workshops').hidden = true; skipBtn.hidden = true; }
@@ -212,7 +213,10 @@ export async function initSponsors() {
     const { tiers, items } = await fetchJSON('data/sponsors.json');
     if (!items.length) { cta(); observe(body); return; }
     const ordered = tiers?.length ? [...items].sort((a, b) => tiers.indexOf(a.tier) - tiers.indexOf(b.tier)) : items;
-    body.replaceChildren(buildSpotlight(ordered));
+    const spotlight = buildSpotlight(ordered);
+    spotlight.classList.add('reveal');
+    body.replaceChildren(spotlight);
+    observe(body);
   } catch { section('partners').hidden = true; }
 }
 
@@ -238,6 +242,7 @@ export async function initFAQ() {
     faq.forEach(f => list.append(el('details', {},
       el('summary', {}, f.q),
       el('div', { class: 'ans' }, el('p', {}, clean(f.a) || 'To be announced.')))));
+    observe(list);   // #faqList has data-stagger; this fetch resolves after main.js's own observe() pass
   } catch { section('faq').hidden = true; }
 }
 
