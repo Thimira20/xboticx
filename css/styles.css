@@ -575,6 +575,9 @@
   .footer-in { display: grid; gap: var(--s-4); }
   .footer-brand { display: flex; align-items: center; gap: var(--s-4); }
   @media (min-width: 768px) { .footer-in { grid-template-columns: 1fr auto; align-items: center; } .footer-in > p { grid-column: 1 / -1; } }
+  .dev-credit { margin-top: -.5rem; }
+  .dev-credit a { text-decoration: underline; text-underline-offset: 2px; text-decoration-color: var(--line-strong); transition: color .2s, text-decoration-color .2s; }
+  .dev-credit a:hover, .dev-credit a:focus-visible { color: var(--red-bright); text-decoration-color: currentColor; }
 }
 
 @layer utilities {
