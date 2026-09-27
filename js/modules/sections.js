@@ -247,20 +247,38 @@ function socialLinks(cls) {
   return Object.entries(SOCIAL).filter(([k]) => L[k]).map(([k, name]) => el('a', { class: `btn btn-ghost btn-sm ${cls || ''}`, ...linkAttrs(L[k]) }, name));
 }
 
+// Decorative only (desktop): a real, geographically traced Sri Lanka outline (assets/img/venue-map-lk.svg —
+// see its header comment for the source/licence) filling the Venue card's leftover height, with a radar
+// ping over Galle. The pin's position (25.95%, 96.3%) was computed from Galle's actual lat/long against
+// the source map's documented projection bounds, not eyeballed. el() can't create SVG nodes, so the pin
+// markup (needs no namespace since it's plain HTML) is built normally, only the ping's ring is CSS.
+function venueMapDecor() {
+  // .lk-wrap shrink-wraps exactly to the rendered image (no letterboxing), so the pin's percentage
+  // position lines up with the actual map regardless of how much height the flex layout gives it.
+  const box = el('div', { class: 'venue-map', 'aria-hidden': 'true' },
+    el('div', { class: 'lk-wrap' },
+      el('img', { src: 'assets/img/venue-map-lk.svg', alt: '', loading: 'lazy' }),
+      el('span', { class: 'lk-pin', style: 'left:25.95%;top:96.3%' },
+        el('span', { class: 'lk-ping' }), el('span', { class: 'lk-ping d2' }), el('span', { class: 'lk-ping d3' }),
+        el('span', { class: 'lk-dot' }), el('span', { class: 'lk-label' }, 'Galle'))));
+  return box;
+}
+
 export function initContact() {
   const grid = $('#contactGrid'), v = cfg.venue;
   const mapBox = el('div', { class: 'map-box', hidden: true });
+  const mapDecor = venueMapDecor();
   const loadMap = el('button', { class: 'btn btn-ghost btn-sm', type: 'button', onclick: e => {
     mapBox.replaceChildren(el('iframe', { title: 'Map of the venue', loading: 'lazy', referrerpolicy: 'no-referrer-when-downgrade',
       src: `https://maps.google.com/maps?q=${encodeURIComponent(v.name + ' ' + v.address)}&output=embed` }));
-    mapBox.hidden = false; e.currentTarget.hidden = true;
+    mapBox.hidden = false; mapDecor.hidden = true; e.currentTarget.hidden = true;
   } }, 'Load map');
-  grid.append(el('div', { class: 'card' },
+  grid.append(el('div', { class: 'card venue-card' },
     el('h3', {}, 'Venue'),
     el('p', {}, el('strong', {}, v.name), el('br'), v.address),
     el('div', { class: 'cta-row', style: 'justify-content:flex-start;margin:0' },
       el('a', { class: 'btn btn-primary btn-sm', ...linkAttrs(v.mapUrl) }, 'Open in Maps'), loadMap),
-    mapBox));
+    mapBox, mapDecor));
 
   // Local display format for a WhatsApp number, e.g. "94715508827" -> "071 550 8827".
   const fmtWaNumber = num => {
