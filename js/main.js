@@ -4,6 +4,7 @@ import { startStage } from './modules/stage.js';
 import { initNav } from './modules/nav.js';
 import { initHero } from './modules/hero.js';
 import { initTimeline } from './modules/timeline.js';
+import { initCircuit } from './modules/circuit.js';
 import { observe } from './modules/reveal.js';
 import * as S from './modules/sections.js';
 
@@ -33,3 +34,4 @@ document.addEventListener('countdown:refresh', () => {
 
 safe('stage', startStage);
 safe('reveal', observe);
+safe('circuit', initCircuit);
